@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B970424C1CE6F3280072EEE2 /* shape_predictor_68_face_landmarks.dat in Resources */ = {isa = PBXBuildFile; fileRef = B970424B1CE6F3280072EEE2 /* shape_predictor_68_face_landmarks.dat */; };
 		B97BF8631CE93D2700CE96CC /* libdlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B97BF8621CE93D2700CE96CC /* libdlib.a */; };
+		B9B2F3821CEBB72500B016F8 /* CustomCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = B9B2F3811CEBB72500B016F8 /* CustomCamera.mm */; };
 		B9E2DB311CE5362200A8FA03 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9E2DB301CE5362200A8FA03 /* AVFoundation.framework */; };
 		B9E2DB3A1CE5368000A8FA03 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9E2DB321CE5368000A8FA03 /* Accelerate.framework */; };
 		B9E2DB3B1CE5368000A8FA03 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9E2DB331CE5368000A8FA03 /* AssetsLibrary.framework */; };
@@ -34,6 +35,8 @@
 		734D3DD3C70DAEB7F6355C45 /* Pods_CP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B970424B1CE6F3280072EEE2 /* shape_predictor_68_face_landmarks.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = shape_predictor_68_face_landmarks.dat; sourceTree = "<group>"; };
 		B97BF8621CE93D2700CE96CC /* libdlib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdlib.a; path = CP/Frameworks/libdlib.a; sourceTree = "<group>"; };
+		B9B2F3801CEBB72500B016F8 /* CustomCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomCamera.h; sourceTree = "<group>"; };
+		B9B2F3811CEBB72500B016F8 /* CustomCamera.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomCamera.mm; sourceTree = "<group>"; };
 		B9E2DB301CE5362200A8FA03 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B9E2DB321CE5368000A8FA03 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		B9E2DB331CE5368000A8FA03 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
@@ -139,6 +142,8 @@
 				B9FA069C1CE51F1300398D79 /* LaunchScreen.storyboard */,
 				B9FA069F1CE51F1300398D79 /* Info.plist */,
 				B9FA068E1CE51F1300398D79 /* Supporting Files */,
+				B9B2F3801CEBB72500B016F8 /* CustomCamera.h */,
+				B9B2F3811CEBB72500B016F8 /* CustomCamera.mm */,
 			);
 			path = CP;
 			sourceTree = "<group>";
@@ -282,6 +287,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B9FA06961CE51F1300398D79 /* ViewController.mm in Sources */,
+				B9B2F3821CEBB72500B016F8 /* CustomCamera.mm in Sources */,
 				B9FA06931CE51F1300398D79 /* AppDelegate.m in Sources */,
 				B9FA06901CE51F1300398D79 /* main.m in Sources */,
 			);
@@ -334,22 +340,24 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "${SRCROOT}/dlib/";
+				HEADER_SEARCH_PATHS = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -378,14 +386,16 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "${SRCROOT}/dlib/";
+				HEADER_SEARCH_PATHS = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
@@ -409,6 +419,11 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/CP/Frameworks",
 				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-isystem",
+					"${SRCROOT}/dlib/",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.agsoares.CP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -429,6 +444,11 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/CP/Frameworks",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-isystem",
+					"${SRCROOT}/dlib/",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.agsoares.CP;
 				PRODUCT_NAME = "$(TARGET_NAME)";

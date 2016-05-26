@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -16,11 +18,66 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ecq-i5-F0I">
+                                <rect key="frame" x="268.5" y="516" width="64" height="64"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="Ecq-i5-F0I" secondAttribute="height" multiplier="1:1" id="2y5-iv-LNH"/>
+                                    <constraint firstAttribute="width" constant="64" id="hU1-lb-kuY"/>
+                                </constraints>
+                                <state key="normal" image="camera-lens"/>
+                                <connections>
+                                    <action selector="photoButtonClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="P0a-dd-6Bp"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0qN-DG-EP3" userLabel="Mask Button">
+                                <rect key="frame" x="548" y="548" width="32" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="32" id="25P-2u-n94"/>
+                                    <constraint firstAttribute="width" secondItem="0qN-DG-EP3" secondAttribute="height" multiplier="1:1" id="WXc-Yq-NVE"/>
+                                </constraints>
+                                <state key="normal" image="mask"/>
+                                <connections>
+                                    <action selector="maskButtonClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="PqX-F6-qlO"/>
+                                    <action selector="photoButtonClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="f3M-Af-Ir9"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VH3-ua-4Qz" userLabel="Change Button">
+                                <rect key="frame" x="548" y="36" width="32" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="VH3-ua-4Qz" secondAttribute="height" multiplier="1:1" id="7hr-oX-Rah"/>
+                                    <constraint firstAttribute="width" constant="32" id="RW7-xb-Isp"/>
+                                </constraints>
+                                <state key="normal" image="repeat"/>
+                                <connections>
+                                    <action selector="changeButtonClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xAi-2I-ehw"/>
+                                    <action selector="photoButtonClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ldS-Fg-UeY"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="0qN-DG-EP3" secondAttribute="bottom" constant="20" id="3wW-C7-zrO"/>
+                            <constraint firstItem="VH3-ua-4Qz" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="16" id="G54-gG-1MH"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="0qN-DG-EP3" secondAttribute="trailing" id="iHO-Uo-G4q"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="VH3-ua-4Qz" secondAttribute="trailing" id="ma5-Tq-nYM"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Ecq-i5-F0I" secondAttribute="bottom" constant="20" id="p8Z-58-C6A"/>
+                            <constraint firstItem="Ecq-i5-F0I" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="whK-ab-5tv"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="changeButton" destination="VH3-ua-4Qz" id="3TT-Aa-VhC"/>
+                        <outlet property="maskButton" destination="0qN-DG-EP3" id="aet-oc-ANr"/>
+                        <outlet property="photoButton" destination="Ecq-i5-F0I" id="8Jd-Hs-OGC"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
         </scene>
     </scenes>
+    <resources>
+        <image name="camera-lens" width="128" height="128"/>
+        <image name="mask" width="128" height="128"/>
+        <image name="repeat" width="128" height="128"/>
+    </resources>
 </document>
