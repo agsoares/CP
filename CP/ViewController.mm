@@ -209,12 +209,26 @@ using namespace std;
         
         [self presentViewController:alertController animated:YES completion:nil];
     } else {
+        UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+        UIView *flashView = [[UIView alloc] initWithFrame:window.bounds];
+        flashView.backgroundColor = [UIColor whiteColor];
+        flashView.alpha = 1.0f;
+        [window addSubview:flashView];
+        
+        // Fade it out and remove after animation.
+        [UIView animateWithDuration:0.2f animations:^{
+            flashView.alpha = 0.0f;
+        } completion:^(BOOL finished) {
+            [flashView removeFromSuperview];
+        }];
         msg = @"should work!";
     }
 }
 
 - (IBAction)photoButtonClick:(id)sender {
-    UIImage *image = MatToUIImage(photo);
+    Mat out_;
+    cvtColor(photo, out_, COLOR_BGR2RGB);
+    UIImage *image = MatToUIImage(out_);
     UIImageWriteToSavedPhotosAlbum(image,
                                    self, // send the message to 'self' when calling the callback
                                    @selector(thisImage:hasBeenSavedInPhotoAlbumWithError:usingContextInfo:), // the selector to tell the method to call on completion
@@ -308,14 +322,12 @@ using namespace std;
             warpAffine(filter, warpedFilter, warpMat, warpedFilter.size());
             warpAffine(filterMask, warpedMask, warpMat, warpedMask.size());
             
-            int i = warpedMask.type();
-            
             if (warpedFilter.data) {
                 //out_ = warpedMask;
-                cv::seamlessClone(warpedFilter, image, warpedMask, cv::Point(image.rows/2,image.cols/2), out_, NORMAL_CLONE);
+                //cv::seamlessClone(warpedFilter, image, warpedMask, cv::Point(image.rows/2,image.cols/2), out_, NORMAL_CLONE);
             }
 
-            image = out_;
+            //image = out_;
         }
     }
     photo = image;
