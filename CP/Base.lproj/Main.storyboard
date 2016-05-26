@@ -39,7 +39,6 @@
                                 <state key="normal" image="mask"/>
                                 <connections>
                                     <action selector="maskButtonClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="PqX-F6-qlO"/>
-                                    <action selector="photoButtonClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="f3M-Af-Ir9"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VH3-ua-4Qz" userLabel="Change Button">
@@ -51,7 +50,6 @@
                                 <state key="normal" image="repeat"/>
                                 <connections>
                                     <action selector="changeButtonClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xAi-2I-ehw"/>
-                                    <action selector="photoButtonClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ldS-Fg-UeY"/>
                                 </connections>
                             </button>
                         </subviews>

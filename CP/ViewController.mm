@@ -172,6 +172,7 @@ using namespace std;
                 }
             }
         }
+        cvtColor(filterMask, filterMask, COLOR_BGR2GRAY);
 
         //std::vector<Point2f> hull;
         //convexHull(filterPoints, hull, false, true);
@@ -214,14 +215,13 @@ using namespace std;
         flashView.backgroundColor = [UIColor whiteColor];
         flashView.alpha = 1.0f;
         [window addSubview:flashView];
-        
+        AudioServicesPlaySystemSoundWithCompletion(1108, nil);
         // Fade it out and remove after animation.
-        [UIView animateWithDuration:0.2f animations:^{
+        [UIView animateWithDuration:0.3f animations:^{
             flashView.alpha = 0.0f;
         } completion:^(BOOL finished) {
             [flashView removeFromSuperview];
         }];
-        msg = @"should work!";
     }
 }
 
@@ -230,9 +230,9 @@ using namespace std;
     cvtColor(photo, out_, COLOR_BGR2RGB);
     UIImage *image = MatToUIImage(out_);
     UIImageWriteToSavedPhotosAlbum(image,
-                                   self, // send the message to 'self' when calling the callback
-                                   @selector(thisImage:hasBeenSavedInPhotoAlbumWithError:usingContextInfo:), // the selector to tell the method to call on completion
-                                   NULL);
+        self, // send the message to 'self' when calling the callback
+        @selector(thisImage:hasBeenSavedInPhotoAlbumWithError:usingContextInfo:), // the selector to tell the method to call on completion
+        NULL);
     
 }
 
@@ -315,7 +315,7 @@ using namespace std;
             Mat warpMat = getAffineTransform(v2, v1);
             
             Mat warpedFilter = Mat::zeros(image.size().height, image.size().width, CV_8UC3);
-            Mat warpedMask = Mat::zeros(image.size().height, image.size().width, CV_8UC3);
+            Mat warpedMask = Mat::zeros(image.size().height, image.size().width, CV_8UC1);
             
             Mat out_ = image.clone();// = Mat::zeros(image.size().height, image.size().width, CV_8UC3);;
             
@@ -330,7 +330,7 @@ using namespace std;
             //image = out_;
         }
     }
-    photo = image;
+    photo = image.clone();
 }
 
 @end
