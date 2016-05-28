@@ -12,7 +12,7 @@
 #import <opencv2/imgcodecs/ios.h>
 #import <opencv2/videoio/cap_ios.h>
 
-@interface ViewController : UIViewController<CvVideoCameraDelegate>
+@interface ViewController : UIViewController<CvVideoCameraDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource>
 
 @end
 

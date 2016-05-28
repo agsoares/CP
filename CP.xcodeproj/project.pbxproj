@@ -7,22 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B92398F51CF8F8F400ED26FC /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B92398F41CF8F8F400ED26FC /* Photos.framework */; };
 		B970424C1CE6F3280072EEE2 /* shape_predictor_68_face_landmarks.dat in Resources */ = {isa = PBXBuildFile; fileRef = B970424B1CE6F3280072EEE2 /* shape_predictor_68_face_landmarks.dat */; };
 		B97BF8631CE93D2700CE96CC /* libdlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B97BF8621CE93D2700CE96CC /* libdlib.a */; };
 		B9B2F3821CEBB72500B016F8 /* CustomCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = B9B2F3811CEBB72500B016F8 /* CustomCamera.mm */; };
 		B9C4AD911CF6890A00B9F143 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9C4AD901CF6890A00B9F143 /* AudioToolbox.framework */; };
 		B9E2DB311CE5362200A8FA03 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9E2DB301CE5362200A8FA03 /* AVFoundation.framework */; };
 		B9E2DB3A1CE5368000A8FA03 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9E2DB321CE5368000A8FA03 /* Accelerate.framework */; };
-		B9E2DB3B1CE5368000A8FA03 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9E2DB331CE5368000A8FA03 /* AssetsLibrary.framework */; };
 		B9E2DB3C1CE5368000A8FA03 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9E2DB341CE5368000A8FA03 /* CoreGraphics.framework */; };
 		B9E2DB3D1CE5368000A8FA03 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9E2DB351CE5368000A8FA03 /* CoreMedia.framework */; };
 		B9E2DB3E1CE5368000A8FA03 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9E2DB361CE5368000A8FA03 /* CoreVideo.framework */; };
 		B9E2DB3F1CE5368000A8FA03 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9E2DB371CE5368000A8FA03 /* Foundation.framework */; };
 		B9E2DB401CE5368000A8FA03 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9E2DB381CE5368000A8FA03 /* QuartzCore.framework */; };
 		B9E2DB411CE5368000A8FA03 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9E2DB391CE5368000A8FA03 /* UIKit.framework */; };
-		B9E2DB431CE53CF900A8FA03 /* haarcascade_frontalface_default.xml in Resources */ = {isa = PBXBuildFile; fileRef = B9E2DB421CE53CF900A8FA03 /* haarcascade_frontalface_default.xml */; };
-		B9E2DB461CE53E1300A8FA03 /* haarcascade_eye_tree_eyeglasses.xml in Resources */ = {isa = PBXBuildFile; fileRef = B9E2DB441CE53E1300A8FA03 /* haarcascade_eye_tree_eyeglasses.xml */; };
-		B9E2DB471CE53E1300A8FA03 /* lbpcascade_frontalface.xml in Resources */ = {isa = PBXBuildFile; fileRef = B9E2DB451CE53E1300A8FA03 /* lbpcascade_frontalface.xml */; };
 		B9FA06901CE51F1300398D79 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B9FA068F1CE51F1300398D79 /* main.m */; };
 		B9FA06931CE51F1300398D79 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B9FA06921CE51F1300398D79 /* AppDelegate.m */; };
 		B9FA06961CE51F1300398D79 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B9FA06951CE51F1300398D79 /* ViewController.mm */; };
@@ -34,6 +31,7 @@
 
 /* Begin PBXFileReference section */
 		734D3DD3C70DAEB7F6355C45 /* Pods_CP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B92398F41CF8F8F400ED26FC /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		B970424B1CE6F3280072EEE2 /* shape_predictor_68_face_landmarks.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = shape_predictor_68_face_landmarks.dat; sourceTree = "<group>"; };
 		B97BF8621CE93D2700CE96CC /* libdlib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdlib.a; path = CP/Frameworks/libdlib.a; sourceTree = "<group>"; };
 		B9B2F3801CEBB72500B016F8 /* CustomCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomCamera.h; sourceTree = "<group>"; };
@@ -48,9 +46,6 @@
 		B9E2DB371CE5368000A8FA03 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B9E2DB381CE5368000A8FA03 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B9E2DB391CE5368000A8FA03 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		B9E2DB421CE53CF900A8FA03 /* haarcascade_frontalface_default.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = haarcascade_frontalface_default.xml; sourceTree = "<group>"; };
-		B9E2DB441CE53E1300A8FA03 /* haarcascade_eye_tree_eyeglasses.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = haarcascade_eye_tree_eyeglasses.xml; sourceTree = "<group>"; };
-		B9E2DB451CE53E1300A8FA03 /* lbpcascade_frontalface.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = lbpcascade_frontalface.xml; sourceTree = "<group>"; };
 		B9FA068B1CE51F1300398D79 /* CP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9FA068F1CE51F1300398D79 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B9FA06911CE51F1300398D79 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -70,10 +65,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B92398F51CF8F8F400ED26FC /* Photos.framework in Frameworks */,
 				B9C4AD911CF6890A00B9F143 /* AudioToolbox.framework in Frameworks */,
 				B9E2DB311CE5362200A8FA03 /* AVFoundation.framework in Frameworks */,
 				B9E2DB3A1CE5368000A8FA03 /* Accelerate.framework in Frameworks */,
-				B9E2DB3B1CE5368000A8FA03 /* AssetsLibrary.framework in Frameworks */,
 				B9E2DB3C1CE5368000A8FA03 /* CoreGraphics.framework in Frameworks */,
 				B9E2DB3D1CE5368000A8FA03 /* CoreMedia.framework in Frameworks */,
 				B9E2DB3E1CE5368000A8FA03 /* CoreVideo.framework in Frameworks */,
@@ -91,6 +86,7 @@
 		255D5A5FCB3FC9B3A8FACEE1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B92398F41CF8F8F400ED26FC /* Photos.framework */,
 				B9C4AD901CF6890A00B9F143 /* AudioToolbox.framework */,
 				B97BF8621CE93D2700CE96CC /* libdlib.a */,
 				B9E2DB301CE5362200A8FA03 /* AVFoundation.framework */,
@@ -155,9 +151,6 @@
 		B9FA068E1CE51F1300398D79 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				B9E2DB441CE53E1300A8FA03 /* haarcascade_eye_tree_eyeglasses.xml */,
-				B9E2DB451CE53E1300A8FA03 /* lbpcascade_frontalface.xml */,
-				B9E2DB421CE53CF900A8FA03 /* haarcascade_frontalface_default.xml */,
 				B970424B1CE6F3280072EEE2 /* shape_predictor_68_face_landmarks.dat */,
 				B9FA068F1CE51F1300398D79 /* main.m */,
 			);
@@ -229,9 +222,6 @@
 				B9FA069B1CE51F1300398D79 /* Assets.xcassets in Resources */,
 				B9FA06991CE51F1300398D79 /* Main.storyboard in Resources */,
 				B9FA069E1CE51F1300398D79 /* LaunchScreen.storyboard in Resources */,
-				B9E2DB431CE53CF900A8FA03 /* haarcascade_frontalface_default.xml in Resources */,
-				B9E2DB461CE53E1300A8FA03 /* haarcascade_eye_tree_eyeglasses.xml in Resources */,
-				B9E2DB471CE53E1300A8FA03 /* lbpcascade_frontalface.xml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

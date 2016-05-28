@@ -15,6 +15,15 @@
 
 #import "CustomCamera.h"
 
+#include <Photos/PHPhotoLibrary.h>
+#include <Photos/PHFetchOptions.h>
+#include <Photos/PHFetchResult.h>
+#include <Photos/PHAsset.h>
+#include <Photos/PHImageManager.h>
+#include <Photos/PHCollection.h>
+
+
+
 using namespace cv;
 
 using namespace dlib;
@@ -36,6 +45,8 @@ using namespace std;
     BOOL isDebug;
     
     
+    NSLock* detectorLock;
+    
     cv::Mat photo;
     
     
@@ -44,6 +55,10 @@ using namespace std;
     std::vector<Point2f> filterPoints;
     Subdiv2D filterSubdiv;
     
+    UICollectionView *photoGallery;
+    UIAlertController *alert;
+    
+    NSMutableArray *photosArray;
 }
 
 @end
@@ -66,6 +81,21 @@ using namespace std;
     isDebug = YES;
     
     [self loadImage:[UIImage imageNamed:@"john-cena"]];
+    
+    UICollectionViewFlowLayout *layout=[[UICollectionViewFlowLayout alloc] init];
+    [layout setItemSize: CGSizeMake(100, 100)];
+    [layout setScrollDirection: UICollectionViewScrollDirectionVertical];
+    
+    photosArray = [[NSMutableArray alloc] init];
+    
+    photoGallery = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, 0, 0) collectionViewLayout:layout];
+    
+    [photoGallery registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"cellIdentifier"];
+    
+    photoGallery.dataSource = self;
+    photoGallery.delegate   = self;
+    photoGallery.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.1];
+    
 }
 
 - (void)setupVideoCamera {
@@ -95,39 +125,17 @@ using namespace std;
 }
 
 - (void)setupFaceDetector {
+    detectorLock = [[NSLock alloc] init];
     detector = get_frontal_face_detector();
     
     NSString *path = [[NSBundle mainBundle] pathForResource:@"shape_predictor_68_face_landmarks" ofType:@"dat"];
     const char *filePath = [path cStringUsingEncoding:NSUTF8StringEncoding];
     deserialize(filePath) >> pose_model;
     
-    [self loadImage: [UIImage imageNamed:@"john-cena"]];
+    //[self loadImage: [UIImage imageNamed:@"john-cena"]];
     
 }
 
-
-- (cv::Mat)cvMatFromUIImage:(UIImage *)image
-{
-    CGColorSpaceRef colorSpace = CGImageGetColorSpace(image.CGImage);
-    CGFloat cols = image.size.width;
-    CGFloat rows = image.size.height;
-    
-    cv::Mat cvMat(rows, cols, CV_8UC4); // 8 bits per component, 4 channels (color channels + alpha)
-    
-    CGContextRef contextRef = CGBitmapContextCreate(cvMat.data,                 // Pointer to  data
-                                                    cols,                       // Width of bitmap
-                                                    rows,                       // Height of bitmap
-                                                    8,                          // Bits per component
-                                                    cvMat.step[0],              // Bytes per row
-                                                    colorSpace,                 // Colorspace
-                                                    kCGImageAlphaNoneSkipLast |
-                                                    kCGBitmapByteOrderDefault); // Bitmap info flags
-    
-    CGContextDrawImage(contextRef, CGRectMake(0, 0, cols, rows), image.CGImage);
-    CGContextRelease(contextRef);
-    
-    return cvMat;
-}
 
 - (void) loadImage: (UIImage *) image {
     UIImageToMat(image, filter, false);
@@ -241,8 +249,82 @@ using namespace std;
 }
 
 - (IBAction)maskButtonClick:(id)sender {
+    [maskButton setEnabled:NO];
+    alert = [UIAlertController alertControllerWithTitle:@"\n\n\n\n\n"
+                                                message:@""
+                                         preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
+                                                           style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) { }];
     
+    CGFloat margin = 8.0;
+    [alert addAction:cancelAction];
     
+    alert.view.contentMode = UIViewContentModeScaleToFill;
+    
+    [photoGallery setFrame:CGRectMake(margin, margin, alert.view.bounds.size.width - margin * 4.0F, 100.0F)];
+    
+    [alert.self.view addSubview:photoGallery];
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+        photosArray = [self albumImages];
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            [self presentViewController:alert animated:YES completion:nil];
+            [maskButton setEnabled:YES];
+        });
+    });
+}
+
+- (NSMutableArray *) albumImages {
+    NSMutableArray *a = [[NSMutableArray alloc] init];
+    PHFetchResult *smartAlbums = [PHAssetCollection fetchMomentsWithOptions:nil];//[PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeSmartAlbum subtype:PHAssetCollectionSubtypeAlbumRegular options:nil];
+    
+    //set up fetch options, mediaType is image.
+    PHFetchOptions *options = [[PHFetchOptions alloc] init];
+    options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO]];
+    options.predicate = [NSPredicate predicateWithFormat:@"mediaType = %d",PHAssetMediaTypeImage];
+    
+    NSMutableArray *t = [[NSMutableArray alloc] init];
+    for (NSInteger i =0; i < smartAlbums.count; i++) {
+        PHAssetCollection *assetCollection = smartAlbums[i];
+        PHFetchResult *assetsFetchResult = [PHAsset fetchAssetsInAssetCollection:assetCollection options:options];
+        
+        if (assetsFetchResult.count > 0) {
+            for (PHAsset *asset in assetsFetchResult) {
+                PHImageManager *manager = [PHImageManager defaultManager];
+                PHImageRequestOptions *assetOptions = [[PHImageRequestOptions alloc] init];
+                assetOptions.synchronous = true;                
+                [manager requestImageForAsset:asset targetSize:PHImageManagerMaximumSize
+                                                  contentMode:PHImageContentModeAspectFit
+                                                      options:assetOptions
+                                                resultHandler:^(UIImage *image, NSDictionary *info) {
+                                                    Mat f;
+                                                    UIImageToMat(image, f, false);
+                                                    Mat gray;
+                                                    cvtColor(f, gray, COLOR_RGB2GRAY);
+                                                    cv_image<uchar> dlib_img(gray);
+                                                    array2d<uchar> img;
+                                                    array2d<uchar> down;
+                                                    assign_image(img, dlib_img);
+                                                    pyramid_down<2> pyr;
+                                                    
+                                                    pyr(img, down);
+                                                    std::vector<dlib::rectangle> dets;
+                                                    @try {
+                                                        [detectorLock lock];
+                                                        dets = detector(down);
+                                                        if (dets.size() > 0 ) {
+                                                            [a addObject:image];
+                                                        }
+                                                    } @catch (NSException *e) {
+                                                        
+                                                    } @finally {
+                                                        [detectorLock unlock];
+                                                    }
+
+                                                }];
+            }
+        }
+    }
+    return [a copy];
 }
 
 #pragma mark - CvVideoCameraDelegate
@@ -261,8 +343,11 @@ using namespace std;
     pyramid_down<2> pyr;
     pyr(img, down);
     */
-    
-    std::vector<dlib::rectangle> dets = detector(img);
+    std::vector<dlib::rectangle> dets;
+    if ([detectorLock tryLock]){
+        dets = detector(img);
+        [detectorLock unlock];
+    }
     for (int i = 0; i < dets.size(); i++) {
         std::vector<cv::Point2f> landmarks;
         full_object_detection shape = pose_model(img, dets[i]);
@@ -332,5 +417,21 @@ using namespace std;
     }
     photo = image.clone();
 }
+
+#pragma mark - UICollectionViewDelegate
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return [photosArray count];
+}
+
+// The cell that is returned must be retrieved from a call to -dequeueReusableCellWithReuseIdentifier:forIndexPath:
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"cellIdentifier" forIndexPath:indexPath];
+    UIImageView *view = [[UIImageView alloc] initWithImage:photosArray[indexPath.row]];
+    cell.backgroundView =view;
+    
+    return cell;
+}
+
+#pragma mark - UICollectionViewDataSource
 
 @end
