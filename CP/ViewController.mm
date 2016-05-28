@@ -11,6 +11,8 @@
 #import <dlib/image_processing.h>
 #import <dlib/image_processing/frontal_face_detector.h>
 
+#import <dlib/config.h>
+
 #import <dlib/opencv.h>
 
 #import "CustomCamera.h"
@@ -25,9 +27,7 @@
 
 
 using namespace cv;
-
 using namespace dlib;
-
 using namespace std;
 
 @interface ViewController () {
@@ -43,7 +43,6 @@ using namespace std;
 
     BOOL isImageLoaded;
     BOOL isDebug;
-    
     
     NSLock* detectorLock;
     
@@ -80,7 +79,7 @@ using namespace std;
     isImageLoaded = NO;
     isDebug = YES;
     
-    [self loadImage:[UIImage imageNamed:@"john-cena"]];
+    //[self loadImage:[UIImage imageNamed:@"john-cena"]];
     
     UICollectionViewFlowLayout *layout=[[UICollectionViewFlowLayout alloc] init];
     [layout setItemSize: CGSizeMake(100, 100)];
@@ -111,6 +110,7 @@ using namespace std;
     _videoCamera = [[CustomCamera alloc] initWithParentView:camView];
     _videoCamera.defaultAVCaptureDevicePosition = AVCaptureDevicePositionFront;
     _videoCamera.defaultAVCaptureSessionPreset = AVCaptureSessionPreset352x288;
+    _videoCamera.defaultFPS = 30;
 
     _videoCamera.defaultAVCaptureVideoOrientation = AVCaptureVideoOrientationPortrait;
     _videoCamera.grayscaleMode = NO;
@@ -138,10 +138,13 @@ using namespace std;
 
 
 - (void) loadImage: (UIImage *) image {
-    UIImageToMat(image, filter, false);
-    cvtColor(filter, filter, COLOR_BGR2RGB);
+    UIImageToMat(image, filter);
+    cv::Mat out_ (filter.rows, filter.cols, CV_8UC3);
+    //int from_to[] = {2,0, 1,1, 2,0};
+    //mixChannels(filter, out_, from_to, 3);
+    cvtColor(filter, out_, COLOR_RGBA2BGR);
+    out_.copyTo(filter);
     filterPoints.clear();
-    Scalar white = Scalar(255, 255, 255);
 
     Mat gray;
     cvtColor(filter, gray, COLOR_BGR2GRAY);
@@ -159,11 +162,7 @@ using namespace std;
             filterPoints.push_back(p);
             if (bounds.contains(p))
                 subdiv.insert(p);
-            
-            //if(isDebug)
-                //cv::circle(filter, p, 1, red);
         }
-        //cv::rectangle(filter, [self dlibRectangleToOpenCV:dets[i]], red, 1);
         filterMask = Mat::zeros(filter.rows, filter.cols, CV_8UC3);
         std::vector<Vec6f> triangleList;
         subdiv.getTriangleList(triangleList);
@@ -182,11 +181,6 @@ using namespace std;
         }
         cvtColor(filterMask, filterMask, COLOR_BGR2GRAY);
 
-        //std::vector<Point2f> hull;
-        //convexHull(filterPoints, hull, false, true);
-        
-        
-        //cv::fillConvexPoly(filterMask, hull, Scalar(255,255,255));
     }
     isImageLoaded = YES;
 
@@ -249,6 +243,7 @@ using namespace std;
 }
 
 - (IBAction)maskButtonClick:(id)sender {
+    isImageLoaded = NO;
     [maskButton setEnabled:NO];
     alert = [UIAlertController alertControllerWithTitle:@"\n\n\n\n\n"
                                                 message:@""
@@ -264,11 +259,20 @@ using namespace std;
     [photoGallery setFrame:CGRectMake(margin, margin, alert.view.bounds.size.width - margin * 4.0F, 100.0F)];
     
     [alert.self.view addSubview:photoGallery];
+    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    spinner.center = CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height/2);
+    spinner.tag = 12;
+    [self.view addSubview:spinner];
+    [spinner startAnimating];
+    
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
         photosArray = [self albumImages];
         dispatch_async(dispatch_get_main_queue(), ^(void){
+            [photoGallery reloadData];
             [self presentViewController:alert animated:YES completion:nil];
             [maskButton setEnabled:YES];
+            [[self.view viewWithTag:12] stopAnimating];
+            [[self.view viewWithTag:12] removeFromSuperview];
         });
     });
 }
@@ -282,7 +286,6 @@ using namespace std;
     options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO]];
     options.predicate = [NSPredicate predicateWithFormat:@"mediaType = %d",PHAssetMediaTypeImage];
     
-    NSMutableArray *t = [[NSMutableArray alloc] init];
     for (NSInteger i =0; i < smartAlbums.count; i++) {
         PHAssetCollection *assetCollection = smartAlbums[i];
         PHFetchResult *assetsFetchResult = [PHAsset fetchAssetsInAssetCollection:assetCollection options:options];
@@ -297,9 +300,9 @@ using namespace std;
                                                       options:assetOptions
                                                 resultHandler:^(UIImage *image, NSDictionary *info) {
                                                     Mat f;
-                                                    UIImageToMat(image, f, false);
+                                                    UIImageToMat(image, f);
                                                     Mat gray;
-                                                    cvtColor(f, gray, COLOR_RGB2GRAY);
+                                                    cvtColor(f, gray, COLOR_RGBA2GRAY);
                                                     cv_image<uchar> dlib_img(gray);
                                                     array2d<uchar> img;
                                                     array2d<uchar> down;
@@ -399,7 +402,7 @@ using namespace std;
             
             Mat warpMat = getAffineTransform(v2, v1);
             
-            Mat warpedFilter = Mat::zeros(image.size().height, image.size().width, CV_8UC3);
+            Mat warpedFilter = Mat::zeros(image.size().height, image.size().width, CV_8UC4);
             Mat warpedMask = Mat::zeros(image.size().height, image.size().width, CV_8UC1);
             
             Mat out_ = image.clone();// = Mat::zeros(image.size().height, image.size().width, CV_8UC3);;
@@ -408,11 +411,12 @@ using namespace std;
             warpAffine(filterMask, warpedMask, warpMat, warpedMask.size());
             
             if (warpedFilter.data) {
-                //out_ = warpedMask;
+                cvtColor(warpedFilter, warpedFilter, COLOR_RGBA2BGR);
+                out_ = warpedFilter;
                 //cv::seamlessClone(warpedFilter, image, warpedMask, cv::Point(image.rows/2,image.cols/2), out_, NORMAL_CLONE);
             }
-
-            //image = out_;
+            image = out_;
+            
         }
     }
     photo = image.clone();
@@ -427,9 +431,18 @@ using namespace std;
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"cellIdentifier" forIndexPath:indexPath];
     UIImageView *view = [[UIImageView alloc] initWithImage:photosArray[indexPath.row]];
+    view.contentMode = UIViewContentModeScaleAspectFill;
+    view.clipsToBounds = YES;
+    
     cell.backgroundView =view;
+    cell.contentMode = UIViewContentModeScaleAspectFit;
     
     return cell;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    [self loadImage:photosArray[indexPath.row]];
+
 }
 
 #pragma mark - UICollectionViewDataSource
