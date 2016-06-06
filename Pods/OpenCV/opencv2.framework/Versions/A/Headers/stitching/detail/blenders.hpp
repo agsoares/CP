@@ -60,7 +60,7 @@ class CV_EXPORTS Blender
 public:
     virtual ~Blender() {}
 
-    enum { NO, FEATHER, MULTI_BAND };
+    enum { NO_, FEATHER, MULTI_BAND };
     static Ptr<Blender> createDefault(int type, bool try_gpu = false);
 
     /** @brief Prepares the blender for blending.

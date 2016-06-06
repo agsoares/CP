@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B922FC6F1D0383A80071A6CA /* MaskHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B922FC6E1D0383A80071A6CA /* MaskHelper.m */; };
 		B92398F51CF8F8F400ED26FC /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B92398F41CF8F8F400ED26FC /* Photos.framework */; };
 		B970424C1CE6F3280072EEE2 /* shape_predictor_68_face_landmarks.dat in Resources */ = {isa = PBXBuildFile; fileRef = B970424B1CE6F3280072EEE2 /* shape_predictor_68_face_landmarks.dat */; };
 		B97BF8631CE93D2700CE96CC /* libdlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B97BF8621CE93D2700CE96CC /* libdlib.a */; };
@@ -31,6 +32,8 @@
 
 /* Begin PBXFileReference section */
 		734D3DD3C70DAEB7F6355C45 /* Pods_CP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B922FC6D1D0383A80071A6CA /* MaskHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MaskHelper.h; path = Helper/MaskHelper.h; sourceTree = "<group>"; };
+		B922FC6E1D0383A80071A6CA /* MaskHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MaskHelper.m; path = Helper/MaskHelper.m; sourceTree = "<group>"; };
 		B92398F41CF8F8F400ED26FC /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		B970424B1CE6F3280072EEE2 /* shape_predictor_68_face_landmarks.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = shape_predictor_68_face_landmarks.dat; sourceTree = "<group>"; };
 		B97BF8621CE93D2700CE96CC /* libdlib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdlib.a; path = CP/Frameworks/libdlib.a; sourceTree = "<group>"; };
@@ -112,6 +115,15 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		B922FC6C1D0383670071A6CA /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				B922FC6D1D0383A80071A6CA /* MaskHelper.h */,
+				B922FC6E1D0383A80071A6CA /* MaskHelper.m */,
+			);
+			name = Helper;
+			sourceTree = "<group>";
+		};
 		B9FA06821CE51F1300398D79 = {
 			isa = PBXGroup;
 			children = (
@@ -133,6 +145,7 @@
 		B9FA068D1CE51F1300398D79 /* CP */ = {
 			isa = PBXGroup;
 			children = (
+				B922FC6C1D0383670071A6CA /* Helper */,
 				B9FA06911CE51F1300398D79 /* AppDelegate.h */,
 				B9FA06921CE51F1300398D79 /* AppDelegate.m */,
 				B9FA06941CE51F1300398D79 /* ViewController.h */,
@@ -283,6 +296,7 @@
 				B9FA06961CE51F1300398D79 /* ViewController.mm in Sources */,
 				B9B2F3821CEBB72500B016F8 /* CustomCamera.mm in Sources */,
 				B9FA06931CE51F1300398D79 /* AppDelegate.m in Sources */,
+				B922FC6F1D0383A80071A6CA /* MaskHelper.m in Sources */,
 				B9FA06901CE51F1300398D79 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -318,6 +332,7 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_USE_OPTIMIZATION_PROFILE = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -336,7 +351,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -365,6 +380,7 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_USE_OPTIMIZATION_PROFILE = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -382,6 +398,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -423,6 +440,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.agsoares.CP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -451,6 +469,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.agsoares.CP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

@@ -52,6 +52,14 @@
                                     <action selector="changeButtonClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xAi-2I-ehw"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yiU-71-xXU" userLabel="Config Button">
+                                <rect key="frame" x="20" y="548" width="32" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="yiU-71-xXU" secondAttribute="height" multiplier="1:1" id="JlZ-0W-v8b"/>
+                                    <constraint firstAttribute="width" constant="32" id="ZaT-1u-Ua6"/>
+                                </constraints>
+                                <state key="normal" image="gear"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -59,12 +67,15 @@
                             <constraint firstItem="VH3-ua-4Qz" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="16" id="G54-gG-1MH"/>
                             <constraint firstAttribute="trailingMargin" secondItem="0qN-DG-EP3" secondAttribute="trailing" id="iHO-Uo-G4q"/>
                             <constraint firstAttribute="trailingMargin" secondItem="VH3-ua-4Qz" secondAttribute="trailing" id="ma5-Tq-nYM"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="yiU-71-xXU" secondAttribute="bottom" constant="20" id="nfP-EW-ij7"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Ecq-i5-F0I" secondAttribute="bottom" constant="20" id="p8Z-58-C6A"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="yiU-71-xXU" secondAttribute="leading" id="tjw-DP-2PR"/>
                             <constraint firstItem="Ecq-i5-F0I" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="whK-ab-5tv"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="changeButton" destination="VH3-ua-4Qz" id="3TT-Aa-VhC"/>
+                        <outlet property="configButton" destination="yiU-71-xXU" id="aJO-FW-7Zi"/>
                         <outlet property="maskButton" destination="0qN-DG-EP3" id="aet-oc-ANr"/>
                         <outlet property="photoButton" destination="Ecq-i5-F0I" id="8Jd-Hs-OGC"/>
                     </connections>
@@ -75,6 +86,7 @@
     </scenes>
     <resources>
         <image name="camera-lens" width="128" height="128"/>
+        <image name="gear" width="128" height="128"/>
         <image name="mask" width="128" height="128"/>
         <image name="repeat" width="128" height="128"/>
     </resources>

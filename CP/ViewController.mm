@@ -15,6 +15,11 @@
 
 #import <dlib/opencv.h>
 
+
+#import <opencv2/stitching/detail/blenders.hpp>
+
+
+#import "MaskHelper.h"
 #import "CustomCamera.h"
 
 #include <Photos/PHPhotoLibrary.h>
@@ -33,6 +38,7 @@ using namespace std;
 @interface ViewController () {
     BOOL _cameraInitialized;
     CustomCamera *_videoCamera;
+    CvPhotoCamera *_photoCamera;
     
     frontal_face_detector detector;
     shape_predictor pose_model;
@@ -40,6 +46,7 @@ using namespace std;
     __weak IBOutlet UIButton *photoButton;
     __weak IBOutlet UIButton *maskButton;
     __weak IBOutlet UIButton *changeButton;
+    __weak IBOutlet UIButton *configButton;
 
     BOOL isImageLoaded;
     BOOL isDebug;
@@ -53,6 +60,7 @@ using namespace std;
     cv::Mat filterMask;
     std::vector<Point2f> filterPoints;
     Subdiv2D filterSubdiv;
+    std::vector<cv::Point*> filterTriangulation;
     
     UICollectionView *photoGallery;
     UIAlertController *alert;
@@ -77,9 +85,7 @@ using namespace std;
     [self setupFaceDetector];
     
     isImageLoaded = NO;
-    isDebug = YES;
-    
-    //[self loadImage:[UIImage imageNamed:@"john-cena"]];
+    isDebug = NO;
     
     UICollectionViewFlowLayout *layout=[[UICollectionViewFlowLayout alloc] init];
     [layout setItemSize: CGSizeMake(100, 100)];
@@ -105,22 +111,22 @@ using namespace std;
     
     UIView *camView = [[UIView alloc] initWithFrame:self.view.frame];
     [self.view addSubview:camView];
-
     
     _videoCamera = [[CustomCamera alloc] initWithParentView:camView];
     _videoCamera.defaultAVCaptureDevicePosition = AVCaptureDevicePositionFront;
-    _videoCamera.defaultAVCaptureSessionPreset = AVCaptureSessionPreset352x288;
+    _videoCamera.defaultAVCaptureSessionPreset = AVCaptureSessionPresetLow;
     _videoCamera.defaultFPS = 30;
-
+    
+    
     _videoCamera.defaultAVCaptureVideoOrientation = AVCaptureVideoOrientationPortrait;
     _videoCamera.grayscaleMode = NO;
     _videoCamera.rotateVideo = NO;
     _videoCamera.delegate = self;
     
-    
     [self.view bringSubviewToFront:photoButton];
     [self.view bringSubviewToFront:maskButton];
     [self.view bringSubviewToFront:changeButton];
+    [self.view bringSubviewToFront:configButton];
 
 }
 
@@ -131,17 +137,12 @@ using namespace std;
     NSString *path = [[NSBundle mainBundle] pathForResource:@"shape_predictor_68_face_landmarks" ofType:@"dat"];
     const char *filePath = [path cStringUsingEncoding:NSUTF8StringEncoding];
     deserialize(filePath) >> pose_model;
-    
-    //[self loadImage: [UIImage imageNamed:@"john-cena"]];
-    
 }
 
 
 - (void) loadImage: (UIImage *) image {
     UIImageToMat(image, filter);
     cv::Mat out_ (filter.rows, filter.cols, CV_8UC3);
-    //int from_to[] = {2,0, 1,1, 2,0};
-    //mixChannels(filter, out_, from_to, 3);
     cvtColor(filter, out_, COLOR_RGBA2BGR);
     out_.copyTo(filter);
     filterPoints.clear();
@@ -151,33 +152,25 @@ using namespace std;
     cv_image<uchar> dlib_img(gray);
     array2d<uchar> img;
     assign_image(img, dlib_img);
-    
+    [detectorLock lock];
     std::vector<dlib::rectangle> dets = detector(img);
+    [detectorLock unlock];
     for (int i = 0; i < dets.size(); i++) {
-        cv::Rect bounds (0, 0, filter.size().width, filter.size().height);
-        Subdiv2D subdiv(bounds);
         full_object_detection shape = pose_model(img, dets[i]);
         for (int j = 0; j < shape.num_parts(); j++) {
             cv::Point2f p(shape.part(j).x(), shape.part(j).y());
             filterPoints.push_back(p);
-            if (bounds.contains(p))
-                subdiv.insert(p);
         }
         filterMask = Mat::zeros(filter.rows, filter.cols, CV_8UC3);
-        std::vector<Vec6f> triangleList;
-        subdiv.getTriangleList(triangleList);
-        if (isDebug) {
-            for(int j = 0; j < triangleList.size(); j++ )
-            {
-                cv::Point pt[3];
-                Vec6f t = triangleList[j];
-                pt[0] = cv::Point((int)t[0], (int)t[1]);
-                pt[1] = cv::Point((int)t[2], (int)t[3]);
-                pt[2] = cv::Point((int)t[4], (int)t[5]);
-                if (bounds.contains(pt[0]) && bounds.contains(pt[1]) && bounds.contains(pt[2])) {
-                    cv::fillConvexPoly(filterMask, pt, 3, Scalar(255,255,255));
-                }
-            }
+        NSArray *triangulation = [MaskHelper triangulation];
+        for(int j = 0; j < [triangulation count]; j++ )
+        {
+            cv::Point pt[3];
+            NSArray *t = triangulation[j];
+            pt[0] = cv::Point(filterPoints[[t[0] integerValue]]);
+            pt[1] = cv::Point(filterPoints[[t[1] integerValue]]);
+            pt[2] = cv::Point(filterPoints[[t[2] integerValue]]);
+            cv::fillConvexPoly(filterMask, pt, 3, Scalar(255,255,255));
         }
         cvtColor(filterMask, filterMask, COLOR_BGR2GRAY);
 
@@ -194,11 +187,14 @@ using namespace std;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [_videoCamera start];
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [_videoCamera stop];
+
+
 }
 
 - (void)thisImage:(UIImage *)image hasBeenSavedInPhotoAlbumWithError:(NSError *)error usingContextInfo:(void*)ctxInfo {
@@ -228,8 +224,8 @@ using namespace std;
 }
 
 - (IBAction)photoButtonClick:(id)sender {
-    Mat out_;
-    cvtColor(photo, out_, COLOR_BGR2RGB);
+    Mat out_ = photo.clone();
+    //cvtColor(photo, out_, COLOR_BGR2RGBA);
     UIImage *image = MatToUIImage(out_);
     UIImageWriteToSavedPhotosAlbum(image,
         self, // send the message to 'self' when calling the callback
@@ -265,7 +261,7 @@ using namespace std;
     [self.view addSubview:spinner];
     [spinner startAnimating];
     
-    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+    dispatch_async(dispatch_get_global_queue (DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(void){
         photosArray = [self albumImages];
         dispatch_async(dispatch_get_main_queue(), ^(void){
             [photoGallery reloadData];
@@ -333,92 +329,119 @@ using namespace std;
 #pragma mark - CvVideoCameraDelegate
 
 - (void)processImage:(cv::Mat &)image {
-    
-    Mat gray;
-    Scalar green = Scalar(0, 255, 0);
-    Scalar red = Scalar(0, 0, 255);
-    cvtColor(image, gray, COLOR_BGR2GRAY);
-    cv_image<uchar> dlib_img(gray);
-    array2d<uchar> img;
-    array2d<uchar> down;
-    assign_image(img, dlib_img);
-    /*
-    pyramid_down<2> pyr;
-    pyr(img, down);
-    */
-    std::vector<dlib::rectangle> dets;
-    if ([detectorLock tryLock]){
-        dets = detector(img);
-        [detectorLock unlock];
-    }
-    for (int i = 0; i < dets.size(); i++) {
-        std::vector<cv::Point2f> landmarks;
-        full_object_detection shape = pose_model(img, dets[i]);
-        cv::Rect bounds (0, 0, image.size().width, image.size().height);
-        Subdiv2D subdiv(bounds);
-        for (int j = 0; j < shape.num_parts(); j++) {
-            cv::Point2f p (shape.part(j).x(), shape.part(j).y());
-            landmarks.push_back(p);
-            
-            if (bounds.contains(p))
-                subdiv.insert(p);
-            
-            if(isDebug)
-                cv::circle(image, p, 1, green);
+    cvtColor(image, image, COLOR_BGRA2RGB);
+    try {
+        Mat gray;
+        Scalar green = Scalar(0, 255, 0);
+        Scalar red = Scalar(0, 0, 255);
+        cvtColor(image, gray, COLOR_BGR2GRAY);
+        cv_image<uchar> dlib_img(gray);
+        array2d<uchar> img;
+        array2d<uchar> down;
+        assign_image(img, dlib_img);
+        /*
+         pyramid_down<2> pyr;
+         pyr(img, down);
+         */
+        std::vector<dlib::rectangle> dets;
+        if ([detectorLock tryLock]){
+            dets = detector(img);
+            [detectorLock unlock];
         }
-        
-        
-        std::vector<Vec6f> triangleList;
-        //subdiv.getTriangleList(triangleList);
-        if (isDebug) {
-            for(int j = 0; j < triangleList.size(); j++ )
+        for (int i = 0; i < dets.size(); i++) {
+            std::vector<cv::Point2f> landmarks;
+            full_object_detection shape = pose_model(img, dets[i]);
+            for (int j = 0; j < shape.num_parts(); j++) {
+                cv::Point2f p (shape.part(j).x(), shape.part(j).y());
+                landmarks.push_back(p);
+            }
+            std::vector<Vec6f> triangleList;
+            NSArray *triangulation = [MaskHelper triangulation];
+            for(int j = 0; j < [triangulation count]; j++ )
             {
-                std::vector<cv::Point2f> pt(3);
-                Vec6f t = triangleList[j];
-                pt[0] = Point2f(t[0], t[1]);
-                pt[1] = Point2f(t[2], t[3]);
-                pt[2] = Point2f(t[4], t[5]);
-                if (bounds.contains(pt[0]) && bounds.contains(pt[1]) && bounds.contains(pt[2])) {
+                cv::Point pt[3];
+                NSArray *t = triangulation[j];
+                pt[0] = cv::Point(landmarks[[t[0] integerValue]]);
+                pt[1] = cv::Point(landmarks[[t[1] integerValue]]);
+                pt[2] = cv::Point(landmarks[[t[2] integerValue]]);
+                if (isDebug) {
                     cv::line(image, pt[0], pt[1], red, 1, CV_AA, 0);
                     cv::line(image, pt[1], pt[2], red, 1, CV_AA, 0);
                     cv::line(image, pt[2], pt[0], red, 1, CV_AA, 0);
                 }
+
             }
-            cv::rectangle(image, [self dlibRectangleToOpenCV:dets[i]], green, 1);
-        
-        }
-        if (isImageLoaded) {
-            std::vector<Point2f> v1;
-            std::vector<Point2f> v2;
-            
-             
-            v1.push_back(landmarks[36]);
-            v1.push_back(landmarks[45]);
-            v1.push_back(landmarks[8]);
-            
-            v2.push_back(filterPoints[36]);
-            v2.push_back(filterPoints[45]);
-            v2.push_back(filterPoints[8]);
-            
-            Mat warpMat = getAffineTransform(v2, v1);
-            
-            Mat warpedFilter = Mat::zeros(image.size().height, image.size().width, CV_8UC4);
-            Mat warpedMask = Mat::zeros(image.size().height, image.size().width, CV_8UC1);
-            
-            Mat out_ = image.clone();// = Mat::zeros(image.size().height, image.size().width, CV_8UC3);;
-            
-            warpAffine(filter, warpedFilter, warpMat, warpedFilter.size());
-            warpAffine(filterMask, warpedMask, warpMat, warpedMask.size());
-            
-            if (warpedFilter.data) {
-                cvtColor(warpedFilter, warpedFilter, COLOR_RGBA2BGR);
-                out_ = warpedFilter;
-                //cv::seamlessClone(warpedFilter, image, warpedMask, cv::Point(image.rows/2,image.cols/2), out_, NORMAL_CLONE);
+            if (isDebug) cv::rectangle(image, [self dlibRectangleToOpenCV:dets[i]], green, 1);
+            if (isImageLoaded) {
+                
+                Mat warpedFilter = Mat::zeros(image.size().height, image.size().width, CV_8UC3);
+                Mat warpedMask   = Mat::zeros(image.size().height, image.size().width, CV_8UC1);
+                
+                
+                
+                for(int j = 0; j < [triangulation count]; j++) {
+                    std::vector<cv::Point2f> v1;
+                    std::vector<cv::Point2f> v2;
+                    
+                    NSArray *t = triangulation[j];
+                    int i1, i2, i3;
+                    i1 = (int)[t[0] integerValue];
+                    i2 = (int)[t[1] integerValue];
+                    i3 = (int)[t[2] integerValue];
+                    //if (i1 < 17 || i2 < 17 || i3 < 17) continue;
+                    
+                    v1.push_back(landmarks[i1]);
+                    v1.push_back(landmarks[i2]);
+                    v1.push_back(landmarks[i3]);
+                    
+                    v2.push_back(filterPoints[i1]);
+                    v2.push_back(filterPoints[i2]);
+                    v2.push_back(filterPoints[i3]);
+                    
+                    Mat newMask = Mat::zeros(filter.rows, filter.cols, CV_8UC1);
+                    Mat outMask = Mat::zeros(image .rows, image. cols, CV_8UC1);
+                    
+                    Mat warpMat = getAffineTransform(v2, v1);
+                    
+                    cv::Point pt[3];
+                    pt[0] = cv::Point(filterPoints[[t[0] integerValue]]);
+                    pt[1] = cv::Point(filterPoints[[t[1] integerValue]]);
+                    pt[2] = cv::Point(filterPoints[[t[2] integerValue]]);
+                    
+                    cv::fillConvexPoly(newMask, pt, 3, Scalar(255));
+                    warpAffine(newMask, outMask, warpMat, outMask.size());
+                    outMask.copyTo(warpedMask, outMask);
+                    
+                    Mat outFilter = Mat::zeros(image .rows, image. cols, CV_8UC3);
+                    warpAffine(filter, outFilter, warpMat, outFilter.size());
+                    outFilter.copyTo(warpedFilter, outMask);
+                }
+                Mat out_ = image.clone();
+                if (warpedFilter.data) {
+
+                    //out_ = warpedMask;
+                    cvtColor(warpedFilter, warpedFilter, COLOR_RGBA2BGR);
+                    //warpedFilter.copyTo(out_, warpedMask);
+                    cv::Rect r ( cv::boundingRect(landmarks)); //[self dlibRectangleToOpenCV:dets[i]]);
+                    cv::Point2f center = cv::Point2f(r.x+r.width/2, r.y + r.height/2);
+                    
+                    int dilation_type = MORPH_ELLIPSE;
+                    int dilation_size = 1;
+                    Mat kernel = getStructuringElement( dilation_type,
+                                                       cv::Size(2*dilation_size + 1, 2*dilation_size+1),
+                                                       cv::Point(dilation_size, dilation_size));
+                    dilate(warpedMask, warpedMask, kernel);
+                    cv::seamlessClone(warpedFilter, image, warpedMask, center, out_, NORMAL_CLONE);
+                    
+                }
+                if (out_.data)
+                    image = out_;
             }
-            image = out_;
-            
         }
+    } catch (Exception e) {
+        //image = Mat::ones(image .rows, image. cols, CV_8UC3);
     }
+
     photo = image.clone();
 }
 
