@@ -11,13 +11,7 @@
 #import <dlib/image_processing.h>
 #import <dlib/image_processing/frontal_face_detector.h>
 
-#import <dlib/config.h>
-
 #import <dlib/opencv.h>
-
-
-#import <opencv2/stitching/detail/blenders.hpp>
-
 
 #import "MaskHelper.h"
 #import "CustomCamera.h"
@@ -28,8 +22,6 @@
 #include <Photos/PHAsset.h>
 #include <Photos/PHImageManager.h>
 #include <Photos/PHCollection.h>
-
-
 
 using namespace cv;
 using namespace dlib;
@@ -50,6 +42,7 @@ using namespace std;
 
     BOOL isImageLoaded;
     BOOL isDebug;
+    BOOL isSeamless;
     
     NSLock* detectorLock;
     
@@ -86,6 +79,7 @@ using namespace std;
     
     isImageLoaded = NO;
     isDebug = NO;
+    isSeamless = YES;
     
     UICollectionViewFlowLayout *layout=[[UICollectionViewFlowLayout alloc] init];
     [layout setItemSize: CGSizeMake(100, 100)];
@@ -224,7 +218,8 @@ using namespace std;
 }
 
 - (IBAction)photoButtonClick:(id)sender {
-    Mat out_ = photo.clone();
+    Mat out_;
+    cv::resize(photo, out_, cv::Size(), 2.0, 2.0);
     //cvtColor(photo, out_, COLOR_BGR2RGBA);
     UIImage *image = MatToUIImage(out_);
     UIImageWriteToSavedPhotosAlbum(image,
@@ -236,6 +231,29 @@ using namespace std;
 
 - (IBAction)changeButtonClick:(id)sender {
     [self->_videoCamera switchCameras];
+}
+- (IBAction)configButtonClick:(id)sender {
+    UIAlertController *configAlert = [UIAlertController alertControllerWithTitle:@""
+                                                message:@""
+                                         preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
+                                                           style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) { }];
+    
+    UIAlertAction *debugAction = [UIAlertAction actionWithTitle:@"Toggle Debug"
+                                                           style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                               isDebug = !isDebug;
+                                                           }];
+    
+    UIAlertAction *seamlessAction = [UIAlertAction actionWithTitle:@"Toggle Seamless Clone"
+                                                          style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                                                              isSeamless = !isSeamless;
+                                                          }];
+    [configAlert addAction:debugAction];
+    [configAlert addAction:seamlessAction];
+    [configAlert addAction:cancelAction];
+
+    [self presentViewController:configAlert animated:YES completion:nil];
+    
 }
 
 - (IBAction)maskButtonClick:(id)sender {
@@ -365,9 +383,9 @@ using namespace std;
                 pt[1] = cv::Point(landmarks[[t[1] integerValue]]);
                 pt[2] = cv::Point(landmarks[[t[2] integerValue]]);
                 if (isDebug) {
-                    cv::line(image, pt[0], pt[1], red, 1, CV_AA, 0);
-                    cv::line(image, pt[1], pt[2], red, 1, CV_AA, 0);
-                    cv::line(image, pt[2], pt[0], red, 1, CV_AA, 0);
+                    cv::line(image, pt[0], pt[1], green, 1, CV_AA, 0);
+                    cv::line(image, pt[1], pt[2], green, 1, CV_AA, 0);
+                    cv::line(image, pt[2], pt[0], green, 1, CV_AA, 0);
                 }
 
             }
@@ -384,11 +402,20 @@ using namespace std;
                     std::vector<cv::Point2f> v2;
                     
                     NSArray *t = triangulation[j];
+                    
+                    int counter = 0;
+                    for (int k = 48; k <= 67 && counter < 3; k++ ) {
+                        if ([t containsObject:[NSNumber numberWithInteger:k]]) {
+                            counter++;
+                        }
+                        
+                    }
+                    if (counter == 3) continue;
+                    
                     int i1, i2, i3;
                     i1 = (int)[t[0] integerValue];
                     i2 = (int)[t[1] integerValue];
                     i3 = (int)[t[2] integerValue];
-                    //if (i1 < 17 || i2 < 17 || i3 < 17) continue;
                     
                     v1.push_back(landmarks[i1]);
                     v1.push_back(landmarks[i2]);
@@ -403,36 +430,29 @@ using namespace std;
                     
                     Mat warpMat = getAffineTransform(v2, v1);
                     
+
                     cv::Point pt[3];
-                    pt[0] = cv::Point(filterPoints[[t[0] integerValue]]);
-                    pt[1] = cv::Point(filterPoints[[t[1] integerValue]]);
-                    pt[2] = cv::Point(filterPoints[[t[2] integerValue]]);
-                    
-                    cv::fillConvexPoly(newMask, pt, 3, Scalar(255));
-                    warpAffine(newMask, outMask, warpMat, outMask.size());
-                    outMask.copyTo(warpedMask, outMask);
-                    
+                    pt[0] = cv::Point(landmarks[[t[0] integerValue]]);
+                    pt[1] = cv::Point(landmarks[[t[1] integerValue]]);
+                    pt[2] = cv::Point(landmarks[[t[2] integerValue]]);
+                    cv::fillConvexPoly(warpedMask, pt, 3, Scalar(255));
+                    cv::fillConvexPoly(outMask   , pt, 3, Scalar(255));
+
                     Mat outFilter = Mat::zeros(image .rows, image. cols, CV_8UC3);
                     warpAffine(filter, outFilter, warpMat, outFilter.size());
                     outFilter.copyTo(warpedFilter, outMask);
                 }
                 Mat out_ = image.clone();
                 if (warpedFilter.data) {
-
-                    //out_ = warpedMask;
                     cvtColor(warpedFilter, warpedFilter, COLOR_RGBA2BGR);
-                    //warpedFilter.copyTo(out_, warpedMask);
-                    cv::Rect r ( cv::boundingRect(landmarks)); //[self dlibRectangleToOpenCV:dets[i]]);
-                    cv::Point2f center = cv::Point2f(r.x+r.width/2, r.y + r.height/2);
-                    
-                    int dilation_type = MORPH_ELLIPSE;
-                    int dilation_size = 1;
-                    Mat kernel = getStructuringElement( dilation_type,
-                                                       cv::Size(2*dilation_size + 1, 2*dilation_size+1),
-                                                       cv::Point(dilation_size, dilation_size));
-                    dilate(warpedMask, warpedMask, kernel);
-                    cv::seamlessClone(warpedFilter, image, warpedMask, center, out_, NORMAL_CLONE);
-                    
+                    if (isSeamless) {
+                        cv::Rect r ( cv::boundingRect(landmarks)); //[self dlibRectangleToOpenCV:dets[i]]);
+                        cv::Point2f center = cv::Point2f(r.x+r.width/2, r.y + r.height/2);
+                        
+                        cv::seamlessClone(warpedFilter, image, warpedMask, center, out_, NORMAL_CLONE);
+                    } else {
+                        warpedFilter.copyTo(out_, warpedMask);
+                    }
                 }
                 if (out_.data)
                     image = out_;

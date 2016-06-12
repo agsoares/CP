@@ -52,13 +52,16 @@
                                     <action selector="changeButtonClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xAi-2I-ehw"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yiU-71-xXU" userLabel="Config Button">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yiU-71-xXU" userLabel="Config Button">
                                 <rect key="frame" x="20" y="548" width="32" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="yiU-71-xXU" secondAttribute="height" multiplier="1:1" id="JlZ-0W-v8b"/>
                                     <constraint firstAttribute="width" constant="32" id="ZaT-1u-Ua6"/>
                                 </constraints>
                                 <state key="normal" image="gear"/>
+                                <connections>
+                                    <action selector="configButtonClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="SHj-rE-2Ty"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
