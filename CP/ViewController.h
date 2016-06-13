@@ -11,6 +11,8 @@
 
 #import <opencv2/imgcodecs/ios.h>
 #import <opencv2/videoio/cap_ios.h>
+#import <SVProgressHUD/SVProgressHUD.h>
+
 
 @interface ViewController : UIViewController<CvVideoCameraDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource>
 

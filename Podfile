@@ -4,6 +4,7 @@ use_frameworks!
 target 'CP' do
 
   pod 'OpenCV', '~> 3.0.0'
+  pod 'SVProgressHUD'
 
 
 

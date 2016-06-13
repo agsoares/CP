@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		B922FC6F1D0383A80071A6CA /* MaskHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B922FC6E1D0383A80071A6CA /* MaskHelper.m */; };
 		B92398F51CF8F8F400ED26FC /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B92398F41CF8F8F400ED26FC /* Photos.framework */; };
-		B963A7171D079D3E008B70B5 /* FrameBuffer_Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B963A7151D079D3E008B70B5 /* FrameBuffer_Vector.cpp */; };
 		B970424C1CE6F3280072EEE2 /* shape_predictor_68_face_landmarks.dat in Resources */ = {isa = PBXBuildFile; fileRef = B970424B1CE6F3280072EEE2 /* shape_predictor_68_face_landmarks.dat */; };
 		B97BF8631CE93D2700CE96CC /* libdlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B97BF8621CE93D2700CE96CC /* libdlib.a */; };
 		B9B2F3821CEBB72500B016F8 /* CustomCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = B9B2F3811CEBB72500B016F8 /* CustomCamera.mm */; };
@@ -36,8 +35,6 @@
 		B922FC6D1D0383A80071A6CA /* MaskHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MaskHelper.h; path = Helper/MaskHelper.h; sourceTree = "<group>"; };
 		B922FC6E1D0383A80071A6CA /* MaskHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MaskHelper.m; path = Helper/MaskHelper.m; sourceTree = "<group>"; };
 		B92398F41CF8F8F400ED26FC /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
-		B963A7151D079D3E008B70B5 /* FrameBuffer_Vector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FrameBuffer_Vector.cpp; path = "OpenCV Extension/FrameBuffer_Vector.cpp"; sourceTree = "<group>"; };
-		B963A7161D079D3E008B70B5 /* FrameBuffer_Vector.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = FrameBuffer_Vector.hpp; path = "OpenCV Extension/FrameBuffer_Vector.hpp"; sourceTree = "<group>"; };
 		B970424B1CE6F3280072EEE2 /* shape_predictor_68_face_landmarks.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = shape_predictor_68_face_landmarks.dat; sourceTree = "<group>"; };
 		B97BF8621CE93D2700CE96CC /* libdlib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdlib.a; path = CP/Frameworks/libdlib.a; sourceTree = "<group>"; };
 		B9B2F3801CEBB72500B016F8 /* CustomCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomCamera.h; sourceTree = "<group>"; };
@@ -127,15 +124,6 @@
 			name = Helper;
 			sourceTree = "<group>";
 		};
-		B963A7141D079D08008B70B5 /* OpenCV Extension */ = {
-			isa = PBXGroup;
-			children = (
-				B963A7151D079D3E008B70B5 /* FrameBuffer_Vector.cpp */,
-				B963A7161D079D3E008B70B5 /* FrameBuffer_Vector.hpp */,
-			);
-			name = "OpenCV Extension";
-			sourceTree = "<group>";
-		};
 		B9FA06821CE51F1300398D79 = {
 			isa = PBXGroup;
 			children = (
@@ -157,7 +145,6 @@
 		B9FA068D1CE51F1300398D79 /* CP */ = {
 			isa = PBXGroup;
 			children = (
-				B963A7141D079D08008B70B5 /* OpenCV Extension */,
 				B922FC6C1D0383670071A6CA /* Helper */,
 				B9FA06911CE51F1300398D79 /* AppDelegate.h */,
 				B9FA06921CE51F1300398D79 /* AppDelegate.m */,
@@ -190,12 +177,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B9FA06A21CE51F1300398D79 /* Build configuration list for PBXNativeTarget "CP" */;
 			buildPhases = (
-				EE40E143D1F0034E2A093551 /* 📦 Check Pods Manifest.lock */,
+				EE40E143D1F0034E2A093551 /* [CP] Check Pods Manifest.lock */,
 				B9FA06871CE51F1300398D79 /* Sources */,
 				B9FA06881CE51F1300398D79 /* Frameworks */,
 				B9FA06891CE51F1300398D79 /* Resources */,
-				0AD0F768E55D4ABE10487A45 /* 📦 Embed Pods Frameworks */,
-				EFDC24F05639ACA053F47BAB /* 📦 Copy Pods Resources */,
+				0AD0F768E55D4ABE10487A45 /* [CP] Embed Pods Frameworks */,
+				EFDC24F05639ACA053F47BAB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -254,14 +241,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0AD0F768E55D4ABE10487A45 /* 📦 Embed Pods Frameworks */ = {
+		0AD0F768E55D4ABE10487A45 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -269,14 +256,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CP/Pods-CP-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		EE40E143D1F0034E2A093551 /* 📦 Check Pods Manifest.lock */ = {
+		EE40E143D1F0034E2A093551 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -284,14 +271,14 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		EFDC24F05639ACA053F47BAB /* 📦 Copy Pods Resources */ = {
+		EFDC24F05639ACA053F47BAB /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -306,7 +293,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B963A7171D079D3E008B70B5 /* FrameBuffer_Vector.cpp in Sources */,
 				B9FA06961CE51F1300398D79 /* ViewController.mm in Sources */,
 				B9B2F3821CEBB72500B016F8 /* CustomCamera.mm in Sources */,
 				B9FA06931CE51F1300398D79 /* AppDelegate.m in Sources */,

@@ -95,6 +95,11 @@ using namespace std;
     photoGallery.delegate   = self;
     photoGallery.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.1];
     
+    [SVProgressHUD setDefaultStyle:SVProgressHUDStyleCustom];
+    [SVProgressHUD setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:0.5]];
+    [SVProgressHUD setForegroundColor:[[UIColor whiteColor] colorWithAlphaComponent:1.0]];
+    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeBlack];
+    
 }
 
 - (void)setupVideoCamera {
@@ -273,20 +278,15 @@ using namespace std;
     [photoGallery setFrame:CGRectMake(margin, margin, alert.view.bounds.size.width - margin * 4.0F, 100.0F)];
     
     [alert.self.view addSubview:photoGallery];
-    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    spinner.center = CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height/2);
-    spinner.tag = 12;
-    [self.view addSubview:spinner];
-    [spinner startAnimating];
-    
+
+    [SVProgressHUD show];
     dispatch_async(dispatch_get_global_queue (DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(void){
         photosArray = [self albumImages];
         dispatch_async(dispatch_get_main_queue(), ^(void){
             [photoGallery reloadData];
             [self presentViewController:alert animated:YES completion:nil];
             [maskButton setEnabled:YES];
-            [[self.view viewWithTag:12] stopAnimating];
-            [[self.view viewWithTag:12] removeFromSuperview];
+            [SVProgressHUD dismiss];
         });
     });
 }
@@ -351,7 +351,6 @@ using namespace std;
     try {
         Mat gray;
         Scalar green = Scalar(0, 255, 0);
-        Scalar red = Scalar(0, 0, 255);
         cvtColor(image, gray, COLOR_BGR2GRAY);
         cv_image<uchar> dlib_img(gray);
         array2d<uchar> img;
