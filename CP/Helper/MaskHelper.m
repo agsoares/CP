@@ -9,10 +9,6 @@
 #import "MaskHelper.h"
 
 @implementation MaskHelper {
-    NSArray *tri;
-
-
-
 }
 
 
