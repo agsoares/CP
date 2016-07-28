@@ -13,6 +13,8 @@
 #import <opencv2/videoio/cap_ios.h>
 #import <SVProgressHUD/SVProgressHUD.h>
 
+#import "Detector.h"
+
 
 @interface ViewController : UIViewController<CvVideoCameraDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource>
 

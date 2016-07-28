@@ -1,5 +1,5 @@
 //
-//  NSObject+Detector.h
+//  Detector.h
 //  CP
 //
 //  Created by Adriano Soares on 17/07/16.

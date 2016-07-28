@@ -67,7 +67,7 @@ using namespace cv;
 
 - (std::vector<cv::Point2f>) detectLandmarks:(cv::Mat &)image andIsBlocking:(BOOL) isBlocking {
     std::vector<dlib::rectangle> dets;
-    std::vector<cv::Point2f> landmarks;
+    std::vector<cv::Point2f>result;
 
     Mat gray;
     cvtColor(image, gray, COLOR_BGR2GRAY);
@@ -84,25 +84,21 @@ using namespace cv;
     [detectorLock lock];
     @try {
         dets = [self detectFaces:img];
-        if (dets.size() < 1) return landmarks;
-        dlib::rectangle biggest_face = dets[1];
         for (int i = 0; i < dets.size(); i++) {
-            if (dets[i].area() > biggest_face.area()) biggest_face = dets[i];
+            std::vector<cv::Point2f> landmarks;
+            full_object_detection shape = pose_model(img, dets[i]);
+            for (int j = 0; j < shape.num_parts(); j++) {
+                cv::Point2f p (shape.part(j).x(), shape.part(j).y());
+                landmarks.push_back(p);
+            }
+            if(landmarks.size() == 68) result = landmarks;
         }
-        full_object_detection shape = pose_model(img, biggest_face);
-        for (int i = 0; i < shape.num_parts(); i++) {
-            cv::Point2f p (shape.part(i).x(), shape.part(i).y());
-            landmarks.push_back(p);
-        }
-
-
     } @catch (NSException *exception) {
 
     } @finally {
         [detectorLock unlock];
-        return landmarks;
+        return result;
     }
-
 }
 
 - (void) setupFaceDetector {

@@ -11,6 +11,7 @@
 		B92398F51CF8F8F400ED26FC /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B92398F41CF8F8F400ED26FC /* Photos.framework */; };
 		B970424C1CE6F3280072EEE2 /* shape_predictor_68_face_landmarks.dat in Resources */ = {isa = PBXBuildFile; fileRef = B970424B1CE6F3280072EEE2 /* shape_predictor_68_face_landmarks.dat */; };
 		B97BF8631CE93D2700CE96CC /* libdlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B97BF8621CE93D2700CE96CC /* libdlib.a */; };
+		B996CBF91D49B01A001F7E78 /* Detector.mm in Sources */ = {isa = PBXBuildFile; fileRef = B996CBF81D49B01A001F7E78 /* Detector.mm */; };
 		B9B2F3821CEBB72500B016F8 /* CustomCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = B9B2F3811CEBB72500B016F8 /* CustomCamera.mm */; };
 		B9C4AD911CF6890A00B9F143 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9C4AD901CF6890A00B9F143 /* AudioToolbox.framework */; };
 		B9E2DB311CE5362200A8FA03 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9E2DB301CE5362200A8FA03 /* AVFoundation.framework */; };
@@ -37,6 +38,8 @@
 		B92398F41CF8F8F400ED26FC /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		B970424B1CE6F3280072EEE2 /* shape_predictor_68_face_landmarks.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = shape_predictor_68_face_landmarks.dat; sourceTree = "<group>"; };
 		B97BF8621CE93D2700CE96CC /* libdlib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdlib.a; path = CP/Frameworks/libdlib.a; sourceTree = "<group>"; };
+		B996CBF71D49B01A001F7E78 /* Detector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Detector.h; path = Helper/Detector.h; sourceTree = "<group>"; };
+		B996CBF81D49B01A001F7E78 /* Detector.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Detector.mm; path = Helper/Detector.mm; sourceTree = "<group>"; };
 		B9B2F3801CEBB72500B016F8 /* CustomCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomCamera.h; sourceTree = "<group>"; };
 		B9B2F3811CEBB72500B016F8 /* CustomCamera.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomCamera.mm; sourceTree = "<group>"; };
 		B9C4AD901CF6890A00B9F143 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -118,6 +121,8 @@
 		B922FC6C1D0383670071A6CA /* Helper */ = {
 			isa = PBXGroup;
 			children = (
+				B996CBF71D49B01A001F7E78 /* Detector.h */,
+				B996CBF81D49B01A001F7E78 /* Detector.mm */,
 				B922FC6D1D0383A80071A6CA /* MaskHelper.h */,
 				B922FC6E1D0383A80071A6CA /* MaskHelper.m */,
 			);
@@ -298,6 +303,7 @@
 				B9FA06931CE51F1300398D79 /* AppDelegate.m in Sources */,
 				B922FC6F1D0383A80071A6CA /* MaskHelper.m in Sources */,
 				B9FA06901CE51F1300398D79 /* main.m in Sources */,
+				B996CBF91D49B01A001F7E78 /* Detector.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
