@@ -74,14 +74,14 @@ using namespace cv;
     cv_image<uchar> cv_img(gray);
     array2d<uchar> img;
     assign_image(img, cv_img);
-    /*
+    
     if (isBlocking)  {
         [detectorLock lock];
     } else {
-        if (![detectorLock tryLock]) return landmarks;
+        if (![detectorLock tryLock]) return result;
     }
-    */
-    [detectorLock lock];
+    
+    //[detectorLock lock];
     @try {
         dets = [self detectFaces:img];
         for (int i = 0; i < dets.size(); i++) {

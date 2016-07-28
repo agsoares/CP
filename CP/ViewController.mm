@@ -8,11 +8,6 @@
 
 #import "ViewController.h"
 
-#import <dlib/image_processing.h>
-#import <dlib/image_processing/frontal_face_detector.h>
-
-#import <dlib/opencv.h>
-
 #import "MaskHelper.h"
 #import "CustomCamera.h"
 
@@ -312,7 +307,6 @@ using namespace std;
                     if ([t containsObject:[NSNumber numberWithInteger:k]]) {
                         counter++;
                     }
-                    
                 }
                 if (counter == 3) continue;
                 
@@ -334,7 +328,6 @@ using namespace std;
                 
                 Mat warpMat = getAffineTransform(v2, v1);
                 
-                
                 cv::Point pt[3];
                 pt[0] = cv::Point(landmarks[[t[0] integerValue]]);
                 pt[1] = cv::Point(landmarks[[t[1] integerValue]]);
@@ -352,7 +345,6 @@ using namespace std;
                 if (isSeamless) {
                     cv::Rect r ( cv::boundingRect(landmarks)); //[self dlibRectangleToOpenCV:dets[i]]);
                     cv::Point2f center = cv::Point2f(r.x+r.width/2, r.y + r.height/2);
-                    
                     cv::seamlessClone(warpedFilter, image, warpedMask, center, out_, NORMAL_CLONE);
                 } else {
                     warpedFilter.copyTo(out_, warpedMask);
@@ -362,7 +354,7 @@ using namespace std;
                 image = out_;
         }
     } catch (Exception e) {
-        image = Mat::ones(image .rows, image. cols, CV_8UC3);
+        //image = Mat::ones(image .rows, image. cols, CV_8UC3);
     }
 
     photo = image.clone();
