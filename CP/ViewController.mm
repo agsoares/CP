@@ -134,7 +134,12 @@ using namespace std;
     filterPoints.clear();
     filterPoints = [Detector.sharedManager detectLandmarks:filter andIsBlocking:true];
     if (filterPoints.size() < 68) return;
-    
+    cv::Rect boundingBox = boundingRect(filterPoints);
+    filter = filter(boundingBox);
+    for (int i = 0; i < filterPoints.size(); i++) {
+        filterPoints[i].x -= boundingBox.x;
+        filterPoints[i].y -= boundingBox.y;
+    }
     isImageLoaded = YES;
 }
 
